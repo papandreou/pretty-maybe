@@ -1,24 +1,43 @@
-const fs = require('fs').promises;
+const { writeFile } = require('fs').promises;
+const { writeFileSync } = require('fs');
 
 let prettier;
 try {
-  prettier = require('prettier');
+  // Look for the containing project's prettier
+  prettier = require.main.require('prettier');
 } catch (err) {}
 
-function maybeApplyPrettier(code, fileName) {
-  if (prettier) {
-    code = prettier.format(code, {
-      // Silence warning about using the default babel parser
-      // The parser is still overridable from .prettierrc, as that will come out in the resolved prettier config
-      parser: 'babel',
-      ...prettier.resolveConfig.sync(fileName)
-    });
-  }
-  return code;
+function preparePrettierConfig(prettierConfig) {
+  return {
+    // Silence warning about using the default babel parser
+    // The parser is still overridable from .prettierrc, as that will come out in the resolved prettier config
+    parser: 'babel',
+    ...prettierConfig
+  };
 }
 
-function prettyMaybe(fileName, code) {
-  return fs.promises.writeFile(fileName, maybeApplyPrettier(fileName, code));
+async function prettyMaybe(fileName, code, { requireConfig = true } = {}) {
+  if (prettier) {
+    const prettierConfig = await prettier.resolveConfig(fileName);
+    if (prettierConfig || !requireConfig) {
+      code = prettier.format(code, preparePrettierConfig(prettierConfig));
+    }
+  }
+  return writeFile(fileName, code, 'utf-8');
 }
+
+prettyMaybe.sync = function prettyMaybe(
+  fileName,
+  code,
+  { requireConfig = true } = {}
+) {
+  if (prettier) {
+    const prettierConfig = prettier.resolveConfig.sync(fileName);
+    if (prettierConfig || !requireConfig) {
+      code = prettier.format(code, preparePrettierConfig(prettierConfig));
+    }
+  }
+  writeFileSync(fileName, code, 'utf-8');
+};
 
 module.exports = prettyMaybe;
