@@ -17,7 +17,7 @@ describe('maybe-pretty', function() {
     await mkdir(tmpDir);
   });
   afterEach(async () => {
-    await rimraf(tmpDir);
+    //    await rimraf(tmpDir);
   });
 
   it('should return a promise', async function() {
@@ -29,16 +29,44 @@ describe('maybe-pretty', function() {
 
   describe('when prettier is available', function() {
     describe('with config', function() {
-      let configFileName;
       beforeEach(async function() {
-        configFileName = pathModule.resolve(tmpDir, '.prettierrc');
-        await writeFile(configFileName, '{"singleQuote": true}');
+        await writeFile(
+          pathModule.resolve(tmpDir, '.prettierrc'),
+          '{"singleQuote": true}'
+        );
       });
 
-      it('should format with prettier according to the config', async function() {
+      it('should format JavaScript with prettier according to the config', async function() {
         const fileName = pathModule.resolve(tmpDir, 'myFile.js');
         const code = await prettyMaybe(fileName, 'a="b"');
         expect(code, 'to equal', "a = 'b';\n");
+      });
+
+      it('should format JSON with prettier according to the config', async function() {
+        const fileName = pathModule.resolve(tmpDir, 'myFile.json');
+        const code = await prettyMaybe(fileName, '{  "foo":123  }');
+        expect(code, 'to equal', '{ "foo": 123 }\n');
+      });
+
+      describe('with .prettierignore', function() {
+        beforeEach(async function() {
+          await writeFile(
+            pathModule.resolve(tmpDir, '.prettierignore'),
+            'myIgnoredFile.js\n'
+          );
+        });
+
+        it('should leave an ignored file unchanged', async function() {
+          const fileName = pathModule.resolve(tmpDir, 'myIgnoredFile.js');
+          const code = await prettyMaybe(fileName, 'a="b"');
+          expect(code, 'to equal', 'a="b"');
+        });
+
+        it('should format a file that is not ignored', async function() {
+          const fileName = pathModule.resolve(tmpDir, 'myFile.js');
+          const code = await prettyMaybe(fileName, 'a="b"');
+          expect(code, 'to equal', "a = 'b';\n");
+        });
       });
     });
 
@@ -75,16 +103,40 @@ describe('maybe-pretty', function() {
 
   describe('sync', function() {
     describe('when prettier is available', function() {
-      let configFileName;
-      beforeEach(async function() {
-        configFileName = pathModule.resolve(tmpDir, '.prettierrc');
-        await writeFile(configFileName, '{"singleQuote": true}');
-      });
+      describe('with config', function() {
+        beforeEach(async function() {
+          await writeFile(
+            pathModule.resolve(tmpDir, '.prettierrc'),
+            '{"singleQuote": true}'
+          );
+        });
 
-      it('should format with prettier according to the config', async function() {
-        const fileName = pathModule.resolve(tmpDir, 'myFile.js');
-        const code = prettyMaybe.sync(fileName, 'a="b"');
-        expect(code, 'to equal', "a = 'b';\n");
+        it('should format with prettier according to the config', async function() {
+          const fileName = pathModule.resolve(tmpDir, 'myFile.js');
+          const code = prettyMaybe.sync(fileName, 'a="b"');
+          expect(code, 'to equal', "a = 'b';\n");
+        });
+
+        describe('with .prettierignore', function() {
+          beforeEach(async function() {
+            await writeFile(
+              pathModule.resolve(tmpDir, '.prettierignore'),
+              'myIgnoredFile.js\n'
+            );
+          });
+
+          it('should leave an ignored file unchanged', async function() {
+            const fileName = pathModule.resolve(tmpDir, 'myIgnoredFile.js');
+            const code = prettyMaybe.sync(fileName, 'a="b"');
+            expect(code, 'to equal', 'a="b"');
+          });
+
+          it('should format a file that is not ignored', async function() {
+            const fileName = pathModule.resolve(tmpDir, 'myFile.js');
+            const code = prettyMaybe.sync(fileName, 'a="b"');
+            expect(code, 'to equal', "a = 'b';\n");
+          });
+        });
       });
     });
 
