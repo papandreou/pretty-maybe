@@ -1,6 +1,6 @@
 const expect = require('unexpected');
-const maybePretty = require('../');
-const { mkdir, writeFile, readFile, unlink } = require('fs').promises;
+const prettyMaybe = require('../');
+const { mkdir, writeFile, readFile } = require('fs').promises;
 const pathModule = require('path');
 const { promisify } = require('util');
 const rimraf = promisify(require('rimraf'));
@@ -22,7 +22,7 @@ describe('maybe-pretty', function() {
 
   it('should return a promise', async function() {
     const fileName = pathModule.resolve(tmpDir, 'myFile.js');
-    const returnValue = maybePretty(fileName, 'a="b"');
+    const returnValue = prettyMaybe(fileName, 'a="b"');
     expect(returnValue, 'to be a', 'Promise');
     await returnValue;
   });
@@ -37,7 +37,7 @@ describe('maybe-pretty', function() {
 
       it('should format with prettier according to the config', async function() {
         const fileName = pathModule.resolve(tmpDir, 'myFile.js');
-        await maybePretty(fileName, 'a="b"');
+        await prettyMaybe(fileName, 'a="b"');
         expect(await readFile(fileName, 'utf-8'), 'to equal', "a = 'b';\n");
       });
     });
@@ -45,14 +45,14 @@ describe('maybe-pretty', function() {
     describe('without config', function() {
       it('should write the data unchanged', async function() {
         const fileName = pathModule.resolve(tmpDir, 'myFile.js');
-        await maybePretty(fileName, 'a="b"');
+        await prettyMaybe(fileName, 'a="b"');
         expect(await readFile(fileName, 'utf-8'), 'to equal', 'a="b"');
       });
 
       describe('with requireConfig:false', function() {
         it('should format with prettier', async function() {
           const fileName = pathModule.resolve(tmpDir, 'myFile.js');
-          await maybePretty(fileName, 'a="b"', { requireConfig: false });
+          await prettyMaybe(fileName, 'a="b"', { requireConfig: false });
           expect(await readFile(fileName, 'utf-8'), 'to equal', 'a = "b";\n');
         });
       });
@@ -60,13 +60,13 @@ describe('maybe-pretty', function() {
   });
 
   describe('when prettier is unavailable', function() {
-    const maybePretty = proxyquire('../', {
+    const prettyMaybe = proxyquire('../', {
       prettier: null
     });
 
     it('should write the data unchanged', async function() {
       const fileName = pathModule.resolve(tmpDir, 'myFile.js');
-      await maybePretty(fileName, 'a="b"');
+      await prettyMaybe(fileName, 'a="b"');
       expect(await readFile(fileName, 'utf-8'), 'to equal', 'a="b"');
     });
   });
@@ -81,7 +81,7 @@ describe('maybe-pretty', function() {
 
       it('should format with prettier according to the config', async function() {
         const fileName = pathModule.resolve(tmpDir, 'myFile.js');
-        maybePretty.sync(fileName, 'a="b"');
+        prettyMaybe.sync(fileName, 'a="b"');
         expect(await readFile(fileName, 'utf-8'), 'to equal', "a = 'b';\n");
       });
     });
@@ -89,21 +89,21 @@ describe('maybe-pretty', function() {
     describe('when prettier is unavailable', function() {
       it('should write the data unchanged', async function() {
         const fileName = pathModule.resolve(tmpDir, 'myFile.js');
-        maybePretty.sync(fileName, 'a="b"');
+        prettyMaybe.sync(fileName, 'a="b"');
         expect(await readFile(fileName, 'utf-8'), 'to equal', 'a="b"');
       });
 
       describe('without config', function() {
         it('should write the data unchanged', async function() {
           const fileName = pathModule.resolve(tmpDir, 'myFile.js');
-          maybePretty.sync(fileName, 'a="b"');
+          prettyMaybe.sync(fileName, 'a="b"');
           expect(await readFile(fileName, 'utf-8'), 'to equal', 'a="b"');
         });
 
         describe('with requireConfig:false', function() {
           it('should format with prettier', async function() {
             const fileName = pathModule.resolve(tmpDir, 'myFile.js');
-            maybePretty.sync(fileName, 'a="b"', { requireConfig: false });
+            prettyMaybe.sync(fileName, 'a="b"', { requireConfig: false });
             expect(await readFile(fileName, 'utf-8'), 'to equal', 'a = "b";\n');
           });
         });
