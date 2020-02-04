@@ -1,6 +1,3 @@
-const { writeFile } = require('fs').promises;
-const { writeFileSync } = require('fs');
-
 let prettier;
 try {
   // Look for the containing project's prettier
@@ -23,7 +20,7 @@ async function prettyMaybe(fileName, code, { requireConfig = true } = {}) {
       code = prettier.format(code, preparePrettierConfig(prettierConfig));
     }
   }
-  return writeFile(fileName, code, 'utf-8');
+  return code;
 }
 
 prettyMaybe.sync = function prettyMaybe(
@@ -37,7 +34,7 @@ prettyMaybe.sync = function prettyMaybe(
       code = prettier.format(code, preparePrettierConfig(prettierConfig));
     }
   }
-  writeFileSync(fileName, code, 'utf-8');
+  return code;
 };
 
 module.exports = prettyMaybe;

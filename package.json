@@ -1,7 +1,7 @@
 {
   "name": "pretty-maybe",
   "version": "0.0.0",
-  "description": "Write a text file to disc, applying prettier if it's configured",
+  "description": "Prepare a text file to be written to disc, applying prettier if it's configured",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",

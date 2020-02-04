@@ -37,23 +37,25 @@ describe('maybe-pretty', function() {
 
       it('should format with prettier according to the config', async function() {
         const fileName = pathModule.resolve(tmpDir, 'myFile.js');
-        await prettyMaybe(fileName, 'a="b"');
-        expect(await readFile(fileName, 'utf-8'), 'to equal', "a = 'b';\n");
+        const code = await prettyMaybe(fileName, 'a="b"');
+        expect(code, 'to equal', "a = 'b';\n");
       });
     });
 
     describe('without config', function() {
       it('should write the data unchanged', async function() {
         const fileName = pathModule.resolve(tmpDir, 'myFile.js');
-        await prettyMaybe(fileName, 'a="b"');
-        expect(await readFile(fileName, 'utf-8'), 'to equal', 'a="b"');
+        const code = await prettyMaybe(fileName, 'a="b"');
+        expect(code, 'to equal', 'a="b"');
       });
 
       describe('with requireConfig:false', function() {
         it('should format with prettier', async function() {
           const fileName = pathModule.resolve(tmpDir, 'myFile.js');
-          await prettyMaybe(fileName, 'a="b"', { requireConfig: false });
-          expect(await readFile(fileName, 'utf-8'), 'to equal', 'a = "b";\n');
+          const code = await prettyMaybe(fileName, 'a="b"', {
+            requireConfig: false
+          });
+          expect(code, 'to equal', 'a = "b";\n');
         });
       });
     });
@@ -66,8 +68,8 @@ describe('maybe-pretty', function() {
 
     it('should write the data unchanged', async function() {
       const fileName = pathModule.resolve(tmpDir, 'myFile.js');
-      await prettyMaybe(fileName, 'a="b"');
-      expect(await readFile(fileName, 'utf-8'), 'to equal', 'a="b"');
+      const code = await prettyMaybe(fileName, 'a="b"');
+      expect(code, 'to equal', 'a="b"');
     });
   });
 
@@ -81,30 +83,32 @@ describe('maybe-pretty', function() {
 
       it('should format with prettier according to the config', async function() {
         const fileName = pathModule.resolve(tmpDir, 'myFile.js');
-        prettyMaybe.sync(fileName, 'a="b"');
-        expect(await readFile(fileName, 'utf-8'), 'to equal', "a = 'b';\n");
+        const code = prettyMaybe.sync(fileName, 'a="b"');
+        expect(code, 'to equal', "a = 'b';\n");
       });
     });
 
     describe('when prettier is unavailable', function() {
       it('should write the data unchanged', async function() {
         const fileName = pathModule.resolve(tmpDir, 'myFile.js');
-        prettyMaybe.sync(fileName, 'a="b"');
-        expect(await readFile(fileName, 'utf-8'), 'to equal', 'a="b"');
+        const code = prettyMaybe.sync(fileName, 'a="b"');
+        expect(code, 'to equal', 'a="b"');
       });
 
       describe('without config', function() {
         it('should write the data unchanged', async function() {
           const fileName = pathModule.resolve(tmpDir, 'myFile.js');
-          prettyMaybe.sync(fileName, 'a="b"');
-          expect(await readFile(fileName, 'utf-8'), 'to equal', 'a="b"');
+          const code = prettyMaybe.sync(fileName, 'a="b"');
+          expect(code, 'to equal', 'a="b"');
         });
 
         describe('with requireConfig:false', function() {
           it('should format with prettier', async function() {
             const fileName = pathModule.resolve(tmpDir, 'myFile.js');
-            prettyMaybe.sync(fileName, 'a="b"', { requireConfig: false });
-            expect(await readFile(fileName, 'utf-8'), 'to equal', 'a = "b";\n');
+            const code = prettyMaybe.sync(fileName, 'a="b"', {
+              requireConfig: false
+            });
+            expect(code, 'to equal', 'a = "b";\n');
           });
         });
       });
