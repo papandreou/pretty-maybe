@@ -1,5 +1,5 @@
 const expect = require('unexpected');
-const prettyMaybe = require('../');
+const prettyMaybe = require('../lib/pretty-maybe.js');
 const { mkdir, writeFile, readFile } = require('fs').promises;
 const pathModule = require('path');
 const { promisify } = require('util');

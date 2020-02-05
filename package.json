@@ -2,7 +2,7 @@
   "name": "pretty-maybe",
   "version": "1.1.0",
   "description": "Prepare a text file to be written to disc, applying prettier if it's configured",
-  "main": "index.js",
+  "main": "lib/pretty-maybe.js",
   "scripts": {
     "test": "mocha",
     "lint": "eslint . && prettier --check '**/*.js'",
@@ -46,8 +46,7 @@
   },
   "nyc": {
     "include": [
-      "lib/**",
-      "index.js"
+      "lib/**"
     ]
   }
 }
