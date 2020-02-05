@@ -5,7 +5,7 @@
   "main": "lib/pretty-maybe.js",
   "scripts": {
     "test": "mocha",
-    "lint": "eslint . && prettier --check '**/*.js'",
+    "lint": "eslint . && prettier --check '**/*.{js,md}'",
     "lint-staged": "lint-staged",
     "coverage": "nyc --reporter=lcov --reporter=text --all -- npm test && echo google-chrome coverage/lcov-report/index.html",
     "ci": "npm run coverage && npm run lint"
@@ -40,6 +40,9 @@
   "lint-staged": {
     "*.js": [
       "eslint",
+      "prettier --check"
+    ],
+    "*.md": [
       "prettier --check"
     ]
   },
