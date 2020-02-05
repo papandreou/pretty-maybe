@@ -17,7 +17,7 @@ describe('maybe-pretty', function() {
     await mkdir(tmpDir);
   });
   afterEach(async () => {
-    //    await rimraf(tmpDir);
+    await rimraf(tmpDir);
   });
 
   it('should return a promise', async function() {
@@ -162,6 +162,40 @@ describe('maybe-pretty', function() {
             });
             expect(code, 'to equal', 'a = "b";\n');
           });
+        });
+      });
+    });
+  });
+
+  describe('writeFile', function() {
+    describe('with config', function() {
+      beforeEach(async function() {
+        await writeFile(
+          pathModule.resolve(tmpDir, '.prettierrc'),
+          '{"singleQuote": true}'
+        );
+      });
+
+      it('should format with prettier according to the config and write the file', async function() {
+        const fileName = pathModule.resolve(tmpDir, 'myFile.js');
+        await prettyMaybe.writeFile(fileName, 'a="b"');
+        expect(await readFile(fileName, 'utf-8'), 'to equal', "a = 'b';\n");
+      });
+    });
+
+    describe('sync', function() {
+      describe('with config', function() {
+        beforeEach(async function() {
+          await writeFile(
+            pathModule.resolve(tmpDir, '.prettierrc'),
+            '{"singleQuote": true}'
+          );
+        });
+
+        it('should format with prettier according to the config and write the file', async function() {
+          const fileName = pathModule.resolve(tmpDir, 'myFile.js');
+          prettyMaybe.writeFile.sync(fileName, 'a="b"');
+          expect(await readFile(fileName, 'utf-8'), 'to equal', "a = 'b';\n");
         });
       });
     });
