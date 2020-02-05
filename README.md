@@ -39,7 +39,7 @@ You can also tell it not to require a prettier configuration file by passing
 
 Since you'll most often want to actually write the file to disc, there's also a `writeFile` function that does that:
 
-```
+```js
 (async () => {
   await prettyMaybe.writeFile('/path/to/file.js', 'a=123');
 })();
