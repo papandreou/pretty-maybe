@@ -5,7 +5,7 @@
 [![Coverage Status](https://coveralls.io/repos/papandreou/pretty-maybe/badge.svg)](https://coveralls.io/r/papandreou/pretty-maybe)
 [![Dependency Status](https://david-dm.org/papandreou/pretty-maybe.svg)](https://david-dm.org/papandreou/pretty-maybe)
 
-Serialize a JavaScript/CSS/markdown/... file, running in through prettier's
+Serialize a JavaScript/CSS/markdown/... file, running it through prettier's
 programmatic interface if it is configured for the destination path. You have to
 tell it the path of the file that you're formatting. This is used to sniff the
 file type and to look up the prettier configuration and `.prettierignore`:
@@ -37,6 +37,8 @@ You can also tell it not to require a prettier configuration file by passing
 })();
 ```
 
+It will still require `prettier` to be `require`-able in your project, though.
+
 Since you'll most often want to actually write the file to disc, there's also a `writeFile` function that does that:
 
 ```js
@@ -59,7 +61,7 @@ prettyMaybe.writeFile.sync('/path/to/file.js', 'a=123');
 
 ## Rationale
 
-Why is it necessary with a module like this when you can just use prettier's
+Why is it necessary to have a module like this when you can just use prettier's
 programmatic interface directly?
 
 It's just for convenience. I found prettier's programmatic interface to be quite
