@@ -32,7 +32,7 @@ You can also tell it not to require a prettier configuration file by passing
 ```js
 (async () => {
   const code = await prettyMaybe('/path/to/file.js', 'a=123', {
-    requireConfig: false
+    requireConfig: false,
   });
 })();
 ```
