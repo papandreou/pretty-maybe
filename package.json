@@ -16,7 +16,7 @@
     "coveralls": "^3.0.9",
     "eslint": "^7.0.0",
     "eslint-config-prettier": "^6.10.0",
-    "eslint-config-standard": "^14.1.0",
+    "eslint-config-standard": "^15.0.1",
     "eslint-plugin-import": "^2.20.1",
     "eslint-plugin-mocha": "^8.0.0",
     "eslint-plugin-node": "^11.0.0",
