@@ -4,6 +4,7 @@ const { mkdir, writeFile, readFile } = require('fs').promises;
 const pathModule = require('path');
 const { promisify } = require('util');
 const rimraf = promisify(require('rimraf'));
+const sinon = require('sinon');
 
 describe('pretty-maybe', function () {
   let tmpDir;
@@ -17,6 +18,9 @@ describe('pretty-maybe', function () {
   });
   afterEach(async () => {
     await rimraf(tmpDir);
+  });
+  afterEach(function () {
+    sinon.restore();
   });
 
   it('should return a promise', async function () {
@@ -124,6 +128,23 @@ describe('pretty-maybe', function () {
             expect(code, 'to equal', "a = 'b';\n");
           });
         });
+
+        describe('when the prettier module does not provide a sync version of getFileInfo', function () {
+          beforeEach(function () {
+            sinon
+              .stub(require('prettier').getFileInfo, 'sync')
+              .value(undefined);
+          });
+
+          it('should throw an error', async function () {
+            const fileName = pathModule.resolve(tmpDir, 'myFile.js');
+            expect(
+              () => prettyMaybe.sync(fileName, 'a="b"'),
+              'to throw',
+              'The version of prettier that is installed does not come with sync versions of getFileInfo/resolveConfig. They were removed in prettier 3, which means that prettyMaybe.sync cannot work.'
+            );
+          });
+        });
       });
 
       describe('without config', function () {
@@ -175,6 +196,23 @@ describe('pretty-maybe', function () {
           const fileName = pathModule.resolve(tmpDir, 'myFile.js');
           prettyMaybe.writeFile.sync(fileName, 'a="b"');
           expect(await readFile(fileName, 'utf-8'), 'to equal', "a = 'b';\n");
+        });
+
+        describe('when the prettier module does not provide a sync version of getFileInfo', function () {
+          beforeEach(function () {
+            sinon
+              .stub(require('prettier').getFileInfo, 'sync')
+              .value(undefined);
+          });
+
+          it('should throw an error', async function () {
+            const fileName = pathModule.resolve(tmpDir, 'myFile.js');
+            expect(
+              () => prettyMaybe.writeFile.sync(fileName, 'a="b"'),
+              'to throw',
+              'The version of prettier that is installed does not come with sync versions of getFileInfo/resolveConfig. They were removed in prettier 3, which means that prettyMaybe.sync cannot work.'
+            );
+          });
         });
       });
     });
